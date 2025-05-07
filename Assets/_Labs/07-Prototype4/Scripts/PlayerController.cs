@@ -2,16 +2,28 @@
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 10f;         // Force strength
-    public float torque = 50f;        // Spin force
-    public float drag = 0.2f;         // Light resistance to slow sliding
+    public float speed = 10f;
+    public float torque = 50f;
+    public float drag = 0.2f;
 
     private Rigidbody rb;
+    private Transform playerCam; // Reference to Player Camera (not Camera.main)
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.drag = drag; // constant mild resistance
+        rb.drag = drag;
+
+        // Cache reference to the actual "Player Camera"
+        GameObject camObj = GameObject.Find("Player Camera");
+        if (camObj != null)
+        {
+            playerCam = camObj.transform;
+        }
+        else
+        {
+            Debug.LogError("Player Camera not found. Make sure the camera is named exactly 'Player Camera'.");
+        }
     }
 
     void FixedUpdate()
@@ -19,15 +31,14 @@ public class PlayerController : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
-        // Camera-relative movement
-        Vector3 inputDir = Camera.main.transform.forward * moveVertical + Camera.main.transform.right * moveHorizontal;
+        if (playerCam == null) return;
+
+        // Always use Player Camera's transform, regardless of which camera is active
+        Vector3 inputDir = playerCam.forward * moveVertical + playerCam.right * moveHorizontal;
         inputDir.y = 0;
         inputDir.Normalize();
 
-        // Apply force for movement
         rb.AddForce(inputDir * speed, ForceMode.Force);
-
-        // Spin ball for visual feedback
         rb.AddTorque(new Vector3(0, moveHorizontal * torque, 0));
     }
 }
