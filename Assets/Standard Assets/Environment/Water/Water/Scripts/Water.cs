@@ -50,6 +50,12 @@ namespace UnityStandardAssets.Water
             {
                 return;
             }
+            if (cam.cameraType == CameraType.Preview ||
+        cam.cameraType == CameraType.SceneView ||
+        !cam.enabled || !cam.gameObject.activeInHierarchy)
+        {
+            return;
+        }
 
             // Safeguard from recursive water reflections.
             if (s_InsideWater)
