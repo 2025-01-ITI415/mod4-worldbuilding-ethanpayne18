@@ -1,13 +1,13 @@
 using UnityEngine;
 
-public class CollectibleDestroy : MonoBehaviour
+public class Collectible : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            FindObjectOfType<GameHUD>().UpdateCollectibleCount();
-            Destroy(gameObject);
+            // Disable or destroy the collectible
+            Destroy(gameObject); // Destroys this collectible
         }
     }
 }
